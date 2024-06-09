@@ -9,7 +9,7 @@ from django.db import models
 
 
 class Acabado(models.Model):
-    id = models.DecimalField(primary_key=True, max_digits=65535, decimal_places=65535)
+    id = models.BigAutoField(primary_key=True)
     nombre = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
