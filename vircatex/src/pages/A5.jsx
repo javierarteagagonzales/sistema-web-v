@@ -15,7 +15,7 @@ export default function A5() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
        <h1>Área de Acabados</h1> 
         <Typography paragraph>
-          Bienvenido al área
+          Bienvenido al área estimado Usuario
         </Typography>
       </Box>
 
