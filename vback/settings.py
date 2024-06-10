@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,15 +80,19 @@ WSGI_APPLICATION = "vback.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'vircatex',
+#         'USER': 'postgres',
+#         'PASSWORD': 'prueba',
+#         'HOST': 'localhost',  # O la IP del servidor de PostgreSQL
+#         'PORT': '5432',  # El puerto por defecto de PostgreSQL
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'vircatex',
-        'USER': 'postgres',
-        'PASSWORD': 'prueba',
-        'HOST': 'localhost',  # O la IP del servidor de PostgreSQL
-        'PORT': '5432',  # El puerto por defecto de PostgreSQL
-    }
+    "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
 
