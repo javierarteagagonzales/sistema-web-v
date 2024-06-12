@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 import dj_database_url
 
 import os
@@ -92,7 +93,7 @@ WSGI_APPLICATION = "vback.wsgi.application"
 # }
 
 DATABASES = {
-    "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    "default": dj_database_url.parse(config("DATABASE_URL"))
 }
 
 
