@@ -11,5 +11,5 @@ router.register(r'acabado', AcabadoViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api/acabados/', views.listar_acabados, name='listar_acabados'),
+    path('acabados/', views.listar_acabados, name='listar_acabados'),
 ]
