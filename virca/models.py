@@ -7,6 +7,18 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+class LoteEntradaVista(models.Model):
+    id_entrada = models.IntegerField()
+    fecha_entrada = models.DateTimeField()
+    id_tipo_lote = models.IntegerField()
+    cantidad = models.IntegerField()
+    id_dim_confeccion = models.IntegerField()
+    id_guia_confeccion = models.IntegerField()
+
+    class Meta:
+        managed = False  # No crear tabla en la base de datos
+        db_table = 'vista_lote_entrada'
+
 
 class Acabado(models.Model):
     id_acabado = models.AutoField(primary_key=True)
