@@ -3,7 +3,6 @@ from django.urls import path, include
 #from virca import views
 from .views import AcabadoViewSet
 from rest_framework.routers import DefaultRouter
-
 from . import views
 from .views import AcabadoListView
 from .views import get_lote_entrada_vista
@@ -13,6 +12,7 @@ router.register(r'acabado', AcabadoViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('empleados/', views.empleados_list, name='empleados_list'),
     path('acabados/', AcabadoListView.as_view(), name='acabados-list'),
     path('lote-entrada-vista/', get_lote_entrada_vista, name='lote-entrada-vista'),
 ]

@@ -9,6 +9,13 @@ from django.db import connection
 from django.http import JsonResponse
 
 # Create your views here.
+def empleados_list(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT nombre FROM empleado WHERE id_area = 5")
+        rows = cursor.fetchall()
+        empleados = [{'nombre': row[0]} for row in rows]
+    return JsonResponse(empleados, safe=False)
+
 
 class AcabadoViewSet(viewsets.ModelViewSet):
     queryset = Acabado.objects.all()
