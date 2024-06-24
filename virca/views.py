@@ -17,7 +17,59 @@ from django.db import connection
 
 
 
+
 # Create your views here.
+
+#Reporte
+
+class ReporteAcabadosView(View):
+    def get(self, request):
+        fecha_inicio = request.GET.get('fecha_inicio')
+        fecha_fin = request.GET.get('fecha_fin')
+
+        query = """
+        SELECT DISTINCT e.id_empleado, e.nombre, e.primer_apellido,
+                        e.segundo_apellido, e.id_correo, e.dni, e.id_cargo,
+                        caja_prenda.id_caja, caja_prenda.fecha_creacion,
+                        tipo_prenda.nombre 
+        FROM empleado e
+        JOIN prenda ON e.id_empleado = prenda.id_empleado
+        JOIN caja_prenda ON prenda.id_caja = caja_prenda.id_caja
+        JOIN dimension_prenda ON caja_prenda.id_dim_prenda = dimension_prenda.id_dim_prenda
+        JOIN dimension_confeccion ON dimension_prenda.id_dim_confeccion = dimension_confeccion.id_dim_confeccion
+        JOIN guia_confeccion ON dimension_confeccion.id_guia_confeccion = guia_confeccion.id_guia_confeccion
+        JOIN tipo_prenda ON dimension_confeccion.id_tipo_prenda = tipo_prenda.id_tipo_prenda
+        WHERE id_area=5 AND id_cargo=2
+        AND caja_prenda.fecha_creacion BETWEEN %s AND %s
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, [fecha_inicio, fecha_fin])
+            rows = cursor.fetchall()
+
+        resultados = [
+            {
+                "id_empleado": row[0],
+                "nombre": row[1],
+                "primer_apellido": row[2],
+                "segundo_apellido": row[3],
+                "id_correo": row[4],
+                "dni": row[5],
+                "id_cargo": row[6],
+                "id_caja": row[7],
+                "fecha_creacion": row[8],
+                "tipo_prenda": row[9],
+            }
+            for row in rows
+        ]
+
+        return JsonResponse(resultados, safe=False)
+    
+    
+    
+    
+    
+
 class EmpleadoListView(View):
     def get(self, request):
          with connection.cursor() as cursor:

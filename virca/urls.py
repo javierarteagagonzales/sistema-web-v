@@ -14,7 +14,8 @@ urlpatterns = [
     path('', include(router.urls)),
     path('cajas/', views.CajaPrendaListView.as_view(), name='caja_prenda_list'),
     path('cajas/<int:id_caja>/', views.CajaPrendaDetailView.as_view(), name='caja_prenda_detail'),
-       
+           path('acabadoreporte/', ReporteAcabadosView.as_view(), name='reporte_acabados'),
+
     path('empleados/',views.EmpleadoListView.as_view(), name='empleado_list'),
     path('acabados/', AcabadoListView.as_view(), name='acabados-list'),
     path('lote-entrada-vista/', get_lote_entrada_vista, name='lote-entrada-vista'),
