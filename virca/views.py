@@ -8,13 +8,27 @@ from .models import Acabado
 from django.db import connection
 from django.http import JsonResponse
 
+# views.py
+from django.http import JsonResponse
+from django.views import View
+from django.db import connection
+
+
+
+
+
 # Create your views here.
-def empleados_list(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT nombre FROM empleado WHERE id_area = 5")
-        rows = cursor.fetchall()
-        empleados = [{'nombre': row[0]} for row in rows]
-    return JsonResponse(empleados, safe=False)
+class EmpleadoListView(View):
+    def get(self, request):
+         with connection.cursor() as cursor:
+            cursor.execute('''SELECT id_empleado, nombre FROM empleado WHERE id_area = 5''')
+            rows = cursor.fetchall()
+            result = [
+                    {'id_empleado': row[0], 'nombre': row[1]}
+                    for row in rows
+                ]
+            return JsonResponse(result, safe=False)
+
 
 
 class AcabadoViewSet(viewsets.ModelViewSet):
