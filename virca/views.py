@@ -21,7 +21,7 @@ from django.db import connection
 class EmpleadoListView(View):
     def get(self, request):
          with connection.cursor() as cursor:
-            cursor.execute('''SELECT id_empleado, nombre FROM empleado WHERE id_area = 5''')
+            cursor.execute("SELECT id_empleado, nombre FROM empleado WHERE id_area = 5")
             rows = cursor.fetchall()
             result = [
                     {'id_empleado': row[0], 'nombre': row[1]}
