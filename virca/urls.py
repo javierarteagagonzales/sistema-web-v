@@ -19,4 +19,8 @@ urlpatterns = [
     path('empleados/',views.EmpleadoListView.as_view(), name='empleado_list'),
     path('acabados/', AcabadoListView.as_view(), name='acabados-list'),
     path('lote-entrada-vista/', get_lote_entrada_vista, name='lote-entrada-vista'),
+    
+    # acabados acabados
+    path('empleadosa/', views.empleado_list, name='empleado_list_a'),
+    path('datosa/', views.datos_list, name='datos_list_A'),
 ]

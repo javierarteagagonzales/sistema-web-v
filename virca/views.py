@@ -12,13 +12,53 @@ from django.http import JsonResponse
 from django.http import JsonResponse
 from django.views import View
 from django.db import connection
-
+from .models import Empleado
 
 
 
 
 
 # Create your views here.
+
+#acabados > acabados
+
+def empleado_list_a(request):
+    empleados = Empleado.objects.filter(id_area=5).values('nombre')
+    return JsonResponse(list(empleados), safe=False)
+
+def datos_list_a(request):
+    query = """
+    SELECT distinct(cp.id_caja) as ID_Caja, e.nombre, cp.cantidad,
+    gconf.id_guia_confeccion as ID_guia, tp.nombre as tipo_prenda, ep.nombre as estilo_prenda, 
+    t.nombre as talla, g.nombre as genero,
+    COALESCE(gconf.medida_longitud::text, ' ') AS ml,
+    COALESCE(gconf.medida_hombro::text, ' ') AS mh,
+    COALESCE(gconf.medida_pecho::text, ' ') AS mp,
+    COALESCE(gconf.medida_manga::text, ' ') AS mm,
+    COALESCE(gconf.medida_cintura::text, ' ') AS mc,
+    COALESCE(gconf.medida_cadera::text, ' ') AS mca,
+    COALESCE(gconf.medida_muslo::text, ' ') AS mmu
+    FROM dimension_confeccion dc
+    JOIN guia_confeccion gconf ON dc.id_guia_confeccion = gconf.id_guia_confeccion
+    JOIN tipo_prenda tp ON dc.id_tipo_prenda = tp.id_tipo_prenda
+    JOIN estilo_prenda ep ON dc.id_estilo_prenda = ep.id_estilo_prenda
+    JOIN talla t ON dc.id_talla = t.id_talla
+    JOIN genero g ON dc.id_genero = g.id_genero
+    JOIN dimension_prenda dp ON dc.id_dim_confeccion = dp.id_dim_confeccion
+    JOIN caja_prenda cp ON dp.id_dim_prenda = cp.id_dim_prenda
+    JOIN prenda p ON cp.id_caja = p.id_caja
+    JOIN empleado e ON p.id_empleado = e.id_empleado
+    WHERE e.nombre='Ana Sofía Zaida';
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in rows]
+    return JsonResponse(result, safe=False)
+
+#############
+
 
 #Reporte
 
