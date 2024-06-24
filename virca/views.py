@@ -47,3 +47,65 @@ def get_lote_entrada_vista(request):
         columns = [col[0] for col in cursor.description]
         results = [dict(zip(columns, row)) for row in cursor.fetchall()]
     return JsonResponse(results, safe=False)
+
+
+
+class CajaPrendaListView(View):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.execute('''
+                SELECT cp.id_caja, tp.nombre, cp.cantidad, cp.fecha_creacion, e.nombre, dc.id_dim_confeccion, gc.id_guia_confeccion
+                FROM caja_prenda cp
+                JOIN estado e ON cp.id_estado = e.id_estado
+                JOIN dimension_prenda dp ON cp.id_dim_prenda = dp.id_dim_prenda
+                JOIN dimension_confeccion dc ON dp.id_dim_confeccion = dc.id_dim_confeccion
+                JOIN guia_confeccion gc ON dc.id_guia_confeccion = gc.id_guia_confeccion
+                JOIN tipo_prenda tp ON dc.id_tipo_prenda = tp.id_tipo_prenda
+                ORDER BY cp.fecha_creacion DESC
+            ''')
+            rows = cursor.fetchall()
+
+            result = [
+                {
+                    'id_caja': row[0],
+                    'tipo_prenda': row[1],
+                    'cantidad': row[2],
+                    'fecha_creacion': row[3],
+                    'estado': row[4],
+                    'id_dim_confeccion': row[5],
+                    'id_guia_confeccion': row[6]
+                }
+                for row in rows
+            ]
+
+        return JsonResponse(result, safe=False)
+
+class CajaPrendaDetailView(View):
+    def get(self, request, id_caja):
+        with connection.cursor() as cursor:
+            cursor.execute('''
+                SELECT cp.id_caja, tp.nombre, cp.cantidad, cp.fecha_creacion, e.nombre, dc.id_dim_confeccion, gc.id_guia_confeccion
+                FROM caja_prenda cp
+                JOIN estado e ON cp.id_estado = e.id_estado
+                JOIN dimension_prenda dp ON cp.id_dim_prenda = dp.id_dim_prenda
+                JOIN dimension_confeccion dc ON dp.id_dim_confeccion = dc.id_dim_confeccion
+                JOIN guia_confeccion gc ON dc.id_guia_confeccion = gc.id_guia_confeccion
+                JOIN tipo_prenda tp ON dc.id_tipo_prenda = tp.id_tipo_prenda
+                WHERE cp.id_caja = %s
+            ''', [id_caja])
+            row = cursor.fetchone()
+
+            if row:
+                result = {
+                    'id_caja': row[0],
+                    'tipo_prenda': row[1],
+                    'cantidad': row[2],
+                    'fecha_creacion': row[3],
+                    'estado': row[4],
+                    'id_dim_confeccion': row[5],
+                    'id_guia_confeccion': row[6]
+                }
+            else:
+                result = {}
+
+        return JsonResponse(result)
