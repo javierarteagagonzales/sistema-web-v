@@ -265,13 +265,16 @@ LIMIT 10;
 def get_caja_salida_data(request):
     with connection.cursor() as cursor:
         cursor.execute("""
-            SELECT cl.id_caja, cs.id_salida, cs.fecha_salida::date
-            FROM caja_salida cs
-            FULL JOIN caja_lote cl ON cs.id_caja = cl.id_caja
-            JOIN registro_transformacion_caja rtc ON cl.id_caja = rtc.id_caja
-            JOIN actividad_diaria ad ON rtc.id_actividad = ad.id_actividad
-            WHERE cs.id_area = 5
-            ORDER BY ad.fecha_actividad
+            SELECT caja_lote.id_caja, 
+       caja_salida.id_salida, 
+       caja_salida.fecha_salida::date  
+FROM caja_salida
+FULL JOIN caja_lote ON caja_salida.id_caja = caja_lote.id_caja
+JOIN registro_transformacion_caja ON caja_lote.id_caja = registro_transformacion_caja.id_caja
+JOIN actividad_diaria ON registro_transformacion_caja.id_actividad = actividad_diaria.id_actividad
+WHERE caja_salida.id_area = 5
+ORDER BY actividad_diaria.fecha_actividad;
+
         """)
         rows = cursor.fetchall()
         
