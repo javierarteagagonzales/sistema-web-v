@@ -28,27 +28,33 @@ def empleado_list_a(request):
 
 def datos_list_a(request):
     query = """
-    SELECT distinct(cp.id_caja) as ID_Caja, e.nombre, cp.cantidad,
-    gconf.id_guia_confeccion as ID_guia, tp.nombre as tipo_prenda, ep.nombre as estilo_prenda, 
-    t.nombre as talla, g.nombre as genero,
-    COALESCE(gconf.medida_longitud::text, ' ') AS ml,
-    COALESCE(gconf.medida_hombro::text, ' ') AS mh,
-    COALESCE(gconf.medida_pecho::text, ' ') AS mp,
-    COALESCE(gconf.medida_manga::text, ' ') AS mm,
-    COALESCE(gconf.medida_cintura::text, ' ') AS mc,
-    COALESCE(gconf.medida_cadera::text, ' ') AS mca,
-    COALESCE(gconf.medida_muslo::text, ' ') AS mmu
-    FROM dimension_confeccion dc
-    JOIN guia_confeccion gconf ON dc.id_guia_confeccion = gconf.id_guia_confeccion
-    JOIN tipo_prenda tp ON dc.id_tipo_prenda = tp.id_tipo_prenda
-    JOIN estilo_prenda ep ON dc.id_estilo_prenda = ep.id_estilo_prenda
-    JOIN talla t ON dc.id_talla = t.id_talla
-    JOIN genero g ON dc.id_genero = g.id_genero
-    JOIN dimension_prenda dp ON dc.id_dim_confeccion = dp.id_dim_confeccion
-    JOIN caja_prenda cp ON dp.id_dim_prenda = cp.id_dim_prenda
-    JOIN prenda p ON cp.id_caja = p.id_caja
-    JOIN empleado e ON p.id_empleado = e.id_empleado
-    WHERE e.nombre='Ana Sofía Zaida';
+    SELECT DISTINCT(caja_prenda.id_caja) AS ID_Caja, 
+       empleado.nombre, 
+       caja_prenda.cantidad,
+       guia_confeccion.id_guia_confeccion AS ID_guia, 
+       tipo_prenda.nombre AS tipo_prenda, 
+       estilo_prenda.nombre AS estilo_prenda, 
+       talla.nombre AS talla, 
+       genero.nombre AS genero,
+       COALESCE(guia_confeccion.medida_longitud::text, ' ') AS ml,
+       COALESCE(guia_confeccion.medida_hombro::text, ' ') AS mh,
+       COALESCE(guia_confeccion.medida_pecho::text, ' ') AS mp,
+       COALESCE(guia_confeccion.medida_manga::text, ' ') AS mm,
+       COALESCE(guia_confeccion.medida_cintura::text, ' ') AS mc,
+       COALESCE(guia_confeccion.medida_cadera::text, ' ') AS mca,
+       COALESCE(guia_confeccion.medida_muslo::text, ' ') AS mmu
+FROM dimension_confeccion 
+JOIN guia_confeccion ON dimension_confeccion.id_guia_confeccion = guia_confeccion.id_guia_confeccion
+JOIN tipo_prenda ON dimension_confeccion.id_tipo_prenda = tipo_prenda.id_tipo_prenda
+JOIN estilo_prenda ON dimension_confeccion.id_estilo_prenda = estilo_prenda.id_estilo_prenda
+JOIN talla ON dimension_confeccion.id_talla = talla.id_talla
+JOIN genero ON dimension_confeccion.id_genero = genero.id_genero
+JOIN dimension_prenda ON dimension_confeccion.id_dim_confeccion = dimension_prenda.id_dim_confeccion
+JOIN caja_prenda ON dimension_prenda.id_dim_prenda = caja_prenda.id_dim_prenda
+JOIN prenda ON caja_prenda.id_caja = prenda.id_caja
+JOIN empleado ON prenda.id_empleado = empleado.id_empleado
+WHERE empleado.nombre = 'Ana Sofía Zaida';
+
     """
     with connection.cursor() as cursor:
         cursor.execute(query)
