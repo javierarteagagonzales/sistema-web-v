@@ -224,7 +224,7 @@ class CajaPrendaDetailView(View):
         return JsonResponse(result)
     
     
-#
+#dataview
 
 class MyDataView(View):
     def get(self, request):
