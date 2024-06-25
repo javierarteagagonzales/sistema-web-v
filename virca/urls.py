@@ -27,5 +27,5 @@ urlpatterns = [
 
     path('datosa/', views.datos_list_a, name='datos_list_a'),
     path('data/', MyDataView.as_view(), name='data-view'),
-    path('caja_salida/', get_caja_salida_data, name='get_caja_salida_data'),
+    path('caja_salida/', views.get_caja_salida_data, name='get_caja_salida_data'),
 ]
