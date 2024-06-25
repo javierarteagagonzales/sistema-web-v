@@ -68,7 +68,6 @@ def datos_list_a(request):
 
 
 #Reporte
-
 class ReporteAcabadosView(View):
     def get(self, request):
         fecha_inicio = request.GET.get('fecha_inicio')
@@ -111,6 +110,7 @@ class ReporteAcabadosView(View):
         ]
 
         return JsonResponse(resultados, safe=False)
+
     
     
     
