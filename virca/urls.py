@@ -8,6 +8,7 @@ from .views import AcabadoListView
 from .views import get_lote_entrada_vista
 from .views import ReporteAcabadosView
 from .views import MyDataView
+from .views import get_caja_salida_data
 router = DefaultRouter()
 router.register(r'acabado', AcabadoViewSet)
 
@@ -26,4 +27,5 @@ urlpatterns = [
 
     path('datosa/', views.datos_list_a, name='datos_list_a'),
     path('data/', MyDataView.as_view(), name='data-view'),
+    path('api/caja_salida/', get_caja_salida_data, name='get_caja_salida_data'),
 ]

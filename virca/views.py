@@ -259,3 +259,26 @@ LIMIT 10;
         ]
 
         return JsonResponse(data, safe=False)
+    
+    
+
+def get_caja_salida_data(request):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT cl.id_caja, cs.id_salida, cs.fecha_salida::date
+            FROM caja_salida cs
+            FULL JOIN caja_lote cl ON cs.id_caja = cl.id_caja
+            JOIN registro_transformacion_caja rtc ON cl.id_caja = rtc.id_caja
+            JOIN actividad_diaria ad ON rtc.id_actividad = ad.id_actividad
+            WHERE cs.id_area = 5
+            ORDER BY ad.fecha_actividad
+        """)
+        rows = cursor.fetchall()
+        
+    data = [
+        {"id_caja": row[0], "id_salida": row[1], "fecha_salida": row[2]}
+        for row in rows
+    ]
+    
+    return JsonResponse(data, safe=False)
+
