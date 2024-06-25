@@ -229,16 +229,20 @@ class CajaPrendaDetailView(View):
 class MyDataView(View):
     def get(self, request):
         query = '''
-        select ar.id_area, cl.id_caja, ad.fecha_actividad, e.nombre
-        from registro_transformacion_caja rtc
-        join caja_lote cl on rtc.id_caja = cl.id_caja
-        join actividad_diaria ad on rtc.id_actividad = ad.id_actividad
-        join estado e on cl.id_estado = e.id_estado
-        join orden_producción opro on ad.id_orden_producción = opro.id_orden_producción
-        join area ar on opro.id_area = ar.id_area
-        where ar.id_area = 5
-        order by ad.fecha_actividad desc
-        limit 10;
+        SELECT area.id_area, 
+       caja_lote.id_caja, 
+       actividad_diaria.fecha_actividad, 
+       estado.nombre
+FROM registro_transformacion_caja
+JOIN caja_lote ON registro_transformacion_caja.id_caja = caja_lote.id_caja
+JOIN actividad_diaria ON registro_transformacion_caja.id_actividad = actividad_diaria.id_actividad
+JOIN estado ON caja_lote.id_estado = estado.id_estado
+JOIN orden_producción ON actividad_diaria.id_orden_producción = orden_producción.id_orden_producción
+JOIN area ON orden_producción.id_area = area.id_area
+WHERE area.id_area = 5
+ORDER BY actividad_diaria.fecha_actividad DESC
+LIMIT 10;
+
         '''
         with connection.cursor() as cursor:
             cursor.execute(query)
