@@ -30,7 +30,7 @@ def empleado_list_a(request):
 def datos_list_a(request):
     empleado = request.GET.get('empleado', '')
     query = f"""
-    SELECT caja_prenda.id_caja 
+    SELECT caja_prenda.id_caja,
        empleado.nombre, 
        caja_prenda.cantidad,
        guia_confeccion.id_guia_confeccion AS ID_guia, 
