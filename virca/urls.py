@@ -22,5 +22,6 @@ urlpatterns = [
     
     # acabados acabados
  path('empleadosa/', views.empleado_list_a, name='empleado_list_a'),
-    path('datosa/', views.datos_list_a, name='datos_list_A'),
+
+    path('datosa/', views.datos_list_a, name='datos_list_a'),
 ]
