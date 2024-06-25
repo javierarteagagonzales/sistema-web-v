@@ -7,6 +7,7 @@ from . import views
 from .views import AcabadoListView
 from .views import get_lote_entrada_vista
 from .views import ReporteAcabadosView
+from .views import MyDataView
 router = DefaultRouter()
 router.register(r'acabado', AcabadoViewSet)
 
@@ -24,4 +25,5 @@ urlpatterns = [
  path('empleadosa/', views.empleado_list_a, name='empleado_list_a'),
 
     path('datosa/', views.datos_list_a, name='datos_list_a'),
+    path('data/', MyDataView.as_view(), name='data-view'),
 ]

@@ -222,3 +222,35 @@ class CajaPrendaDetailView(View):
                 result = {}
 
         return JsonResponse(result)
+    
+    
+#
+
+class MyDataView(View):
+    def get(self, request):
+        query = '''
+        select ar.id_area, cl.id_caja, ad.fecha_actividad, e.nombre
+        from registro_transformacion_caja rtc
+        join caja_lote cl on rtc.id_caja = cl.id_caja
+        join actividad_diaria ad on rtc.id_actividad = ad.id_actividad
+        join estado e on cl.id_estado = e.id_estado
+        join orden_producción opro on ad.id_orden_producción = opro.id_orden_producción
+        join area ar on opro.id_area = ar.id_area
+        where ar.id_area = 5
+        order by ad.fecha_actividad desc
+        limit 10;
+        '''
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+        data = [
+            {
+                'id_area': row[0],
+                'id_caja': row[1],
+                'fecha_actividad': row[2],
+                'nombre': row[3],
+            } for row in rows
+        ]
+
+        return JsonResponse(data, safe=False)
