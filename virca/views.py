@@ -26,8 +26,10 @@ def empleado_list_a(request):
     empleados = Empleado.objects.filter(id_area=5).values('nombre')
     return JsonResponse(list(empleados), safe=False)
 
+
 def datos_list_a(request):
-    query = """
+    empleado = request.GET.get('empleado', '')
+    query = f"""
     SELECT DISTINCT(caja_prenda.id_caja) AS ID_Caja, 
        empleado.nombre, 
        caja_prenda.cantidad,
@@ -43,21 +45,20 @@ def datos_list_a(request):
        COALESCE(guia_confeccion.medida_cintura::text, ' ') AS mc,
        COALESCE(guia_confeccion.medida_cadera::text, ' ') AS mca,
        COALESCE(guia_confeccion.medida_muslo::text, ' ') AS mmu
-FROM dimension_confeccion 
-JOIN guia_confeccion ON dimension_confeccion.id_guia_confeccion = guia_confeccion.id_guia_confeccion
-JOIN tipo_prenda ON dimension_confeccion.id_tipo_prenda = tipo_prenda.id_tipo_prenda
-JOIN estilo_prenda ON dimension_confeccion.id_estilo_prenda = estilo_prenda.id_estilo_prenda
-JOIN talla ON dimension_confeccion.id_talla = talla.id_talla
-JOIN genero ON dimension_confeccion.id_genero = genero.id_genero
-JOIN dimension_prenda ON dimension_confeccion.id_dim_confeccion = dimension_prenda.id_dim_confeccion
-JOIN caja_prenda ON dimension_prenda.id_dim_prenda = caja_prenda.id_dim_prenda
-JOIN prenda ON caja_prenda.id_caja = prenda.id_caja
-JOIN empleado ON prenda.id_empleado = empleado.id_empleado
-WHERE empleado.nombre = 'Ana Sofía Zaida';
-
+    FROM dimension_confeccion 
+    JOIN guia_confeccion ON dimension_confeccion.id_guia_confeccion = guia_confeccion.id_guia_confeccion
+    JOIN tipo_prenda ON dimension_confeccion.id_tipo_prenda = tipo_prenda.id_tipo_prenda
+    JOIN estilo_prenda ON dimension_confeccion.id_estilo_prenda = estilo_prenda.id_estilo_prenda
+    JOIN talla ON dimension_confeccion.id_talla = talla.id_talla
+    JOIN genero ON dimension_confeccion.id_genero = genero.id_genero
+    JOIN dimension_prenda ON dimension_confeccion.id_dim_confeccion = dimension_prenda.id_dim_confeccion
+    JOIN caja_prenda ON dimension_prenda.id_dim_prenda = caja_prenda.id_dim_prenda
+    JOIN prenda ON caja_prenda.id_caja = prenda.id_caja
+    JOIN empleado ON prenda.id_empleado = empleado.id_empleado
+    WHERE empleado.nombre = %s;
     """
     with connection.cursor() as cursor:
-        cursor.execute(query)
+        cursor.execute(query, [empleado])
         rows = cursor.fetchall()
         columns = [col[0] for col in cursor.description]
         result = [dict(zip(columns, row)) for row in rows]
