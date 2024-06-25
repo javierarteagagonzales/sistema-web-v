@@ -246,6 +246,7 @@ class MyDataView(View):
 
         data = [
             {
+                'id': f"{row[0]}_{row[1]}",  # Combina id_area y id_caja para formar un id único
                 'id_area': row[0],
                 'id_caja': row[1],
                 'fecha_actividad': row[2],
