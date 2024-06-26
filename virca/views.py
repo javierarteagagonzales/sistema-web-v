@@ -526,12 +526,12 @@ def get_activities(request):
             maquina_actividad ma ON ad.id_actividad = ma.id_actividad
         JOIN 
             maquina m ON ma.id_maquina = m.id_maquina
-        WHERE 
-            ad.fecha_actividad = '2024-06-03'
+
         GROUP BY 
             ma.id_maquina, m.capacidad_total, ad.fecha_actividad
         ORDER BY 
-            cantidad_actividades DESC;
+            ad.fecha_actividad DESC;
+            
     """
     with connection.cursor() as cursor:
         cursor.execute(query)
