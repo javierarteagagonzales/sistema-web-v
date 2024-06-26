@@ -11,6 +11,7 @@ from .views import MyDataView
 from .views import get_caja_salida_data
 from .views import insertar_datos
 from .views import ProductionOrderView
+from .views import LotesEntreFechasView, ProveedorMateriaPrimaView, CrearProveedorView
 router = DefaultRouter()
 router.register(r'acabado', AcabadoViewSet)
 
@@ -32,6 +33,24 @@ urlpatterns = [
     path('caja_salida/', views.get_caja_salida_data, name='get_caja_salida_data'),
     
      # almacen
+     
+     
+         path('lotes/', views.LoteListView.as_view(), name='lote-list'),
+    path('lotes_entre_fechas/', LotesEntreFechasView.as_view()),
+    path('proveedor_materia_prima/', ProveedorMateriaPrimaView.as_view()),
+    path('lote_entrada/', views.LotesEntradaView.as_view()),
+    path('lote_salida/', views.LotesSalidaView.as_view()),
+    path('crear_proveedor/', CrearProveedorView.as_view()),
+
+     
+     
+     
+     
+     
+     
+     
+     
+     
      
      #corte
      
