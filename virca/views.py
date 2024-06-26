@@ -285,3 +285,91 @@ ORDER BY actividad_diaria.fecha_actividad;
     
     return JsonResponse(data, safe=False)
 
+
+#############################################
+
+class OrdenesListView(View):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            query = """
+            SELECT
+                o.id_orden_producción,
+                o.fecha_inicio,
+                o.fecha_fin,
+                o.cantidad,
+                e.nombre AS estado_orden,
+                a.nombre AS area,
+                tc.nombre AS tipo_corte,
+                tmp.nombre AS tipo_materia_prima,
+                o.id_orden_trabajo,
+                o.fecha_creacion
+            FROM
+                orden_producción o
+            JOIN
+                estado e ON o.id_estado = e.id_estado
+            JOIN
+                area a ON o.id_area = a.id_area
+            JOIN
+                dimension_corte dc ON o.id_dim_corte = dc.id_dim_corte
+            JOIN
+                parte_corte_detalle pcd ON dc.id_dim_parte_prenda = pcd.id_dim_parte_prenda
+            JOIN
+                tipo_corte tc ON pcd.id_tipo_corte = tc.id_tipo_corte
+            JOIN
+                actividad_diaria ad ON o.id_orden_producción = ad.id_orden_producción
+            JOIN
+                registro_uso_lote rul ON ad.id_actividad = rul.id_actividad
+            JOIN
+                lote l ON rul.id_lote = l.id_lote
+            JOIN
+                dimension_materia_prima dmp ON l.id_dim_materia_prima = dmp.id_dim_materia_prima
+            JOIN
+                tipo_materia_prima tmp ON dmp.id_tipo_materia_prima = tmp.id_tipo_materia_prima
+            WHERE
+                a.nombre = 'Corte'
+            GROUP BY
+                o.id_orden_producción, o.fecha_inicio, o.fecha_fin, o.cantidad, e.nombre, a.nombre, tc.nombre, tmp.nombre,
+                o.id_orden_trabajo, o.fecha_creacion
+            ORDER BY
+                o.fecha_inicio DESC;
+            """
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+        data = [
+            {
+                'id_orden_produccion': row[0],
+                'fecha_inicio': row[1],
+                'fecha_fin': row[2],
+                'cantidad': row[3],
+                'estado_orden': row[4],
+                'area': row[5],
+                'tipo_corte': row[6],
+                'tipo_materia_prima': row[7],
+                'id_orden_trabajo': row[8],
+                'fecha_creacion': row[9]
+            }
+            for row in rows
+        ]
+        return JsonResponse(data, safe=False)
+
+class AsignarView(View):
+    def post(self, request, id_orden_produccion):
+        body = json.loads(request.body)
+        id_maquina = body['id_maquina']
+        cantidad_hecha = body['cantidad_hecha']
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO actividad_diaria (fecha_actividad, id_orden_producción) VALUES (NOW(), %s) RETURNING id_actividad;",
+                [id_orden_produccion]
+            )
+            id_actividad = cursor.fetchone()[0]
+
+            cursor.execute(
+                "INSERT INTO maquina_actividad (id_actividad, id_maquina, cantidad_hecha) VALUES (%s, %s, %s);",
+                [id_actividad, id_maquina, cantidad_hecha]
+            )
+
+        return JsonResponse({'status': 'success'})
+
