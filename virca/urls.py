@@ -46,8 +46,8 @@ path('production-orders/', ProductionOrderView.as_view(), name='production_order
      path('lotesC1/', views.LotesViewC.as_view(), name='lotes'),
      
      
- path('actividades/', views.actividades, name='actividades'),
-    path('actividad/<int:actividad_id>/', views.actividad_detalle, name='actividad_detalle'),
+path('actividad/', views.get_actividad),
+    path('actividad/<int:id>/', views.get_actividad_detail),
 
      # confeccion
      

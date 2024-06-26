@@ -515,22 +515,23 @@ def actividades(request):
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT 
-                ma.id_maquina,
-                m.capacidad_total,
-                COUNT(ad.id_actividad) AS cantidad_actividades,
-                ad.fecha_actividad
-            FROM 
-                actividad_diaria ad
-            JOIN 
-                maquina_actividad ma ON ad.id_actividad = ma.id_actividad
-            JOIN 
-                maquina m ON ma.id_maquina = m.id_maquina
-            WHERE 
-                ad.fecha_actividad = '2024-06-03'
-            GROUP BY 
-                ma.id_maquina, m.capacidad_total, ad.fecha_actividad
-            ORDER BY 
-                cantidad_actividades DESC;
+          ma.id_maquina,
+          m.capacidad_total,
+          COUNT(ad.id_actividad) AS cantidad_actividades,
+          ad.fecha_actividad
+      FROM 
+          actividad_diaria ad
+      JOIN 
+          maquina_actividad ma ON ad.id_actividad = ma.id_actividad
+      JOIN 
+          maquina m ON ma.id_maquina = m.id_maquina
+ 
+      GROUP BY 
+          ma.id_maquina, m.capacidad_total, ad.fecha_actividad
+      ORDER BY 
+          ad.fecha_actividad DESC;  -- Ordenar la cantidad de actividades de forma descendente
+          
+          
         """)
         rows = cursor.fetchall()
 
