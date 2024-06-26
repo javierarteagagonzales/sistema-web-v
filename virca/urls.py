@@ -43,7 +43,7 @@ path('actividad-diaria/', views.actividad_diaria, name='actividad_diaria'),
 path('insertar/', insertar_datos, name='insertar_datos'),
 path('production-orders/', ProductionOrderView.as_view(), name='production_orders'),
 
-     
+     path('lotesC1/', views.LotesViewC.as_view(), name='lotes'),
      # confeccion
      
      #transito

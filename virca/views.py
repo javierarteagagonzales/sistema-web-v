@@ -476,3 +476,35 @@ class ProductionOrderView(View):
             data = [dict(zip(columns, row)) for row in rows]
 
         return JsonResponse(data, safe=False)
+    
+    
+    
+    
+class LotesViewC(View):
+    def get(self, request):
+        query = """
+            SELECT 
+                l.fecha_creacion::date AS dia,
+                COUNT(l.id_lote) AS cantidad_lotes
+            FROM 
+                lote l
+            JOIN 
+                actividad_diaria ad ON l.id_actividad = ad.id_actividad
+            JOIN 
+                orden_producción op ON ad.id_orden_producción = op.id_orden_producción
+            JOIN 
+                area a ON op.id_area = a.id_area
+            WHERE 
+                a.nombre = 'Corte'
+                AND DATE_TRUNC('month', l.fecha_creacion) = DATE_TRUNC('month', CURRENT_DATE)
+            GROUP BY 
+                l.fecha_creacion::date
+            ORDER BY 
+                dia DESC;
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+        data = [{'dia': row[0], 'cantidad_lotes': row[1]} for row in rows]
+        return JsonResponse(data, safe=False)
