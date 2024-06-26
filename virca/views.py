@@ -768,8 +768,7 @@ class MateriaPrimaDropdownView(View):
     
     
     
-    
-    
+   
     
     
     
@@ -879,3 +878,63 @@ class CrearProveedorView(APIView):
         with connection.cursor() as cursor:
             cursor.execute("CALL crear_proveedor(%s, %s, %s, %s, %s)", [_descripcion_direccion, _direccion_correo, _numero_telefono, _ruc, _denominacion_social])
         return JsonResponse({"message": "Proveedor creado exitosamente"}, status=201)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+class LoteEntradaListView1(View):
+    def get(self, request):
+        nombre_material = request.GET.get('nombre_material')
+        nombre_proveedor = request.GET.get('nombre_proveedor')
+        fecha_entrada = request.GET.get('fecha_entrada')
+        
+        query = """
+            SELECT
+                le.fecha_entrada,
+                l.id_lote,
+                tmp.nombre AS nombre_material,
+                p.denominacion_social AS nombre_proveedor,
+                l.cantidad
+            FROM
+                lote_entrada le
+            JOIN
+                lote l ON le.id_lote = l.id_lote
+            JOIN
+                materia_prima mp ON l.id_lote = mp.id_lote
+            JOIN
+                dimension_materia_prima dmp ON mp.id_dim_materia_prima = dmp.id_dim_materia_prima
+            JOIN
+                tipo_materia_prima tmp ON dmp.id_tipo_materia_prima = tmp.id_tipo_materia_prima
+            JOIN
+                proveedor p ON mp.id_proveedor = p.id_proveedor
+            WHERE 1=1
+        """
+        
+        if fecha_entrada:
+            query += " AND DATE(le.fecha_entrada) = %s"
+        if nombre_material:
+            query += " AND tmp.nombre = %s"
+        if nombre_proveedor:
+            query += " AND p.denominacion_social = %s"
+        
+        with connection.cursor() as cursor:
+            cursor.execute(query, [fecha_entrada, nombre_material, nombre_proveedor])
+            rows = cursor.fetchall()
+        
+        results = []
+        for row in rows:
+            results.append({
+                'fecha_entrada': row[0],
+                'id_lote': row[1],
+                'nombre_material': row[2],
+                'nombre_proveedor': row[3],
+                'cantidad': row[4],
+            })
+        
+        return JsonResponse(results, safe=False) 

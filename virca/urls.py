@@ -11,7 +11,7 @@ from .views import MyDataView
 from .views import get_caja_salida_data
 from .views import insertar_datos
 from .views import ProductionOrderView
-from .views import LotesEntreFechasView,  CrearProveedorView
+from .views import LotesEntreFechasView,  CrearProveedorView, LoteEntradaListView1
 from .views import ProveedorMateriaPrimaView, ProveedorDropdownView, MateriaPrimaDropdownView
 
 
@@ -45,7 +45,7 @@ urlpatterns = [
     path('dropdown_proveedores/', ProveedorDropdownView.as_view(), name='dropdown_proveedores'),
     path('dropdown_materias_primas/', MateriaPrimaDropdownView.as_view(), name='dropdown_materias_primas'),
 
-    
+    path('lote_entradalist/', LoteEntradaListView1.as_view(), name='lote_entrada_list'),
     
     path('lote_entradaalmacen/', views.LotesEntradaView.as_view()),
     path('lote_salidaalmacen/', views.LotesSalidaView.as_view()),
