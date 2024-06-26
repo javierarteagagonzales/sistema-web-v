@@ -639,10 +639,10 @@ class OrdenProduccionListView(View):
         with connection.cursor() as cursor:
             cursor.execute("""
                  SELECT
-                    op2.id_orden_producción
+                    orden_producción.id_orden_producción
                 FROM
-                    orden_producción op2 
-                ORDER BY op2.id_orden_producción DESC;
+                    orden_producción  
+                ORDER BY orden_producción.id_orden_producción DESC;
             """)
             rows = cursor.fetchall()
 
