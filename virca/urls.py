@@ -37,7 +37,13 @@ urlpatterns = [
      
          path('lotesalmacen/', views.LoteListView.as_view(), name='lote-list'),
     path('lotes_entre_fechasalmacen/', LotesEntreFechasView.as_view()),
-    path('proveedor_materia_primaalmacen/', ProveedorMateriaPrimaView.as_view()),
+    
+    path('proveedor_materia_prima/', ProveedorMateriaPrimaView.as_view(), name='proveedor_materia_prima'),
+    path('dropdown_proveedores/', ProveedorDropdownView.as_view(), name='dropdown_proveedores'),
+    path('dropdown_materias_primas/', MateriaPrimaDropdownView.as_view(), name='dropdown_materias_primas'),
+]
+    
+    
     path('lote_entradaalmacen/', views.LotesEntradaView.as_view()),
     path('lote_salidaalmacen/', views.LotesSalidaView.as_view()),
     path('crear_proveedoralmacen/', CrearProveedorView.as_view()),

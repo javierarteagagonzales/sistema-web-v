@@ -706,11 +706,13 @@ class LotesEntreFechasView(APIView):
                 })
         return JsonResponse(result, safe=False)
 
-class ProveedorMateriaPrimaView(APIView):
+    
+class ProveedorMateriaPrimaView(View):
     def post(self, request, *args, **kwargs):
         data = JSONParser().parse(request)
         denominacion_social = data.get('denominacion_social', None)
         nombre = data.get('nombre', None)
+        
         query = """
             SELECT 
                 tmp.nombre AS materia_prima,
@@ -719,35 +721,65 @@ class ProveedorMateriaPrimaView(APIView):
             FROM 
                 proveedor p
             JOIN materia_prima mp ON p.id_proveedor = mp.id_proveedor
-            join lote l ON mp.id_lote = l.id_lote
-            JOIN dimension_materia_prima dmp on mp.id_dim_materia_prima = dmp.id_dim_materia_prima
-            JOIN tipo_materia_prima tmp ON dmp.id_tipo_materia_prima =tmp.id_tipo_materia_prima
+            JOIN lote l ON mp.id_lote = l.id_lote
+            JOIN dimension_materia_prima dmp ON mp.id_dim_materia_prima = dmp.id_dim_materia_prima
+            JOIN tipo_materia_prima tmp ON dmp.id_tipo_materia_prima = tmp.id_tipo_materia_prima
             WHERE 
                 l.id_estado = 12
         """
+        
         params = []
-        if denominacion_social is not None:
+        if denominacion_social:
             query += " AND p.denominacion_social = %s"
             params.append(denominacion_social)
-        if nombre is not None:
+        if nombre:
             query += " AND tmp.nombre = %s"
             params.append(nombre)
-        query += """
-            GROUP BY 
-                tmp.nombre, 
-                p.denominacion_social;
-        """
+        
+        query += " GROUP BY tmp.nombre, p.denominacion_social"
+        
         with connection.cursor() as cursor:
             cursor.execute(query, params)
             rows = cursor.fetchall()
-            result = []
-            for row in rows:
-                result.append({
-                    'materia_prima': row[0],
-                    'proveedor': row[1],
-                    'cantidad_lotes': row[2],
-                })
+            result = [{'materia_prima': row[0], 'proveedor': row[1], 'cantidad_lotes': row[2]} for row in rows]
+        
         return JsonResponse(result, safe=False)
+
+class ProveedorDropdownView(View):
+    def get(self, request, *args, **kwargs):
+        query = "SELECT denominacion_social FROM proveedor"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            result = [{'denominacion_social': row[0]} for row in rows]
+        return JsonResponse(result, safe=False)
+
+class MateriaPrimaDropdownView(View):
+    def get(self, request, *args, **kwargs):
+        query = "SELECT nombre FROM tipo_materia_prima"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            result = [{'nombre': row[0]} for row in rows]
+        return JsonResponse(result, safe=False) 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 class LotesEntradaView(APIView):
     def post(self, request, *args, **kwargs):
