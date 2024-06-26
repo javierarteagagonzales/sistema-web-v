@@ -623,7 +623,7 @@ def get_inspecciones(request):
         rows = dictfetchall(cursor)
     return JsonResponse(rows, safe=False)
 
-def get_ordenes_produccion(request):
+def get_ordenes_produccioncal(request):
     with connection.cursor() as cursor:
         cursor.execute('''
             SELECT
