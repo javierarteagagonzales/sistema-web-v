@@ -15,6 +15,8 @@ from django.db import connection
 from .models import Empleado
 
 
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 
