@@ -83,8 +83,7 @@ path('activity_details/<int:id_actividad>/', views.get_activity_details, name='g
      #pcp
      
      # calidad
- path('inspecciones/', views.InspeccionListViewZ.as_view(), name='inspeccion-list'),
-    path('ordenes-produccioncal/',views.get_ordenes_produccioncal, name='orden-produccion-list'),
+  path('tu-endpoint/', views.TuVista.as_view(), name='tu-vista'),
 
     
     

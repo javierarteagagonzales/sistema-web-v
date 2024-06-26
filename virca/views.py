@@ -687,6 +687,41 @@ class InspeccionListViewZ(View):
         return JsonResponse(results, safe=False)
 
 
+
+
+
+class TuVista(View):
+    def get(self, request):
+        cursor = connection.cursor()
+        query = """
+            SELECT
+                OP2.ID_ORDEN_PRODUCCIÓN,
+                I.ID_INSPECCION,
+                I.ID_LOTE,
+                I.FECHA_INSPECCION::date,
+                I.ID_AQL_LOTE_RANGO,
+                I.CANTIDAD_DEFECTUOSOS,
+                I.ID_AQL_CODIGO,
+                I.ID_AQL_NIVEL,
+                I.ID_AQL_SIGNIFICANCIA,
+                I.ID_ESTADO,
+                I.ID_RESULTADO
+            FROM
+                INSPECCION_CALIDAD I
+                JOIN LOTE LT ON I.ID_LOTE = LT.ID_LOTE
+                JOIN ACTIVIDAD_DIARIA ad ON LT.ID_ACTIVIDAD = ad.ID_ACTIVIDAD
+                JOIN ORDEN_PRODUCCIÓN OP2 ON ad.ID_ORDEN_PRODUCCIÓN = OP2.ID_ORDEN_PRODUCCIÓN
+            ORDER BY OP2.ID_ORDEN_PRODUCCIÓN DESC
+        """
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        # Aquí puedes procesar rows si es necesario antes de devolverlo como JSON
+        data = list(rows)
+
+        return JsonResponse(data, safe=False)
+
+
 ###################################################################
 ##########################################################################333333
 # ALMACÉN CENTRAL
