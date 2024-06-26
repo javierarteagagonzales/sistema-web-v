@@ -44,6 +44,11 @@ path('insertar/', insertar_datos, name='insertar_datos'),
 path('production-orders/', ProductionOrderView.as_view(), name='production_orders'),
 
      path('lotesC1/', views.LotesViewC.as_view(), name='lotes'),
+     
+     
+ path('actividades/', views.actividades, name='actividades'),
+    path('actividad/<int:actividad_id>/', views.actividad_detalle, name='actividad_detalle'),
+
      # confeccion
      
      #transito
