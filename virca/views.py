@@ -594,24 +594,25 @@ class InspeccionListView(View):
     def get(self, request):
         with connection.cursor() as cursor:
             cursor.execute("""
-                SELECT
-                    OP.ID_ORDEN_PRODUCCION,
+                 SELECT
+                    OP2.ID_ORDEN_PRODUCCIóN,
                     I.ID_INSPECCION,
                     I.ID_LOTE,
-                    I.FECHA_INSPECCION,
+                    I.FECHA_INSPECCION::date,
                     I.ID_AQL_LOTE_RANGO,
                     I.CANTIDAD_DEFECTUOSOS,
                     I.ID_AQL_CODIGO,
                     I.ID_AQL_NIVEL,
                     I.ID_AQL_SIGNIFICANCIA,
-                    I.ESTADO,
+                    I.ID_ESTADO,
                     I.ID_RESULTADO
                 FROM
                     INSPECCION_CALIDAD I
                     JOIN LOTE LT ON I.ID_LOTE = LT.ID_LOTE
-                    JOIN ACTIVIDAD_DIARIA AD ON LT.ID_ACTIVIDAD = AD.ID_ACTIVIDAD
-                    JOIN ORDEN_PRODUCCION OP ON AD.ID_ORDEN_PRODUCCION = OP.ID_ORDEN_PRODUCCION
-                ORDER BY OP.ID_ORDEN_PRODUCCION DESC;
+                    JOIN ACTIVIDAD_DIARIA ad ON LT.ID_ACTIVIDAD = ad.ID_ACTIVIDAD
+                    JOIN orden_producción op2  ON ad.id_orden_producción = op2.id_orden_producción
+                ORDER BY op2.id_orden_producción DESC;
+               
             """)
             rows = cursor.fetchall()
 
@@ -637,11 +638,11 @@ class OrdenProduccionListView(View):
     def get(self, request):
         with connection.cursor() as cursor:
             cursor.execute("""
-                SELECT
-                    OP.ID_ORDEN_PRODUCCION
+                 SELECT
+                    op2.id_orden_producción
                 FROM
-                    ORDEN_PRODUCCION OP
-                ORDER BY OP.ID_ORDEN_PRODUCCION DESC;
+                    orden_producción op2 
+                ORDER BY op2.id_orden_producción DESC;
             """)
             rows = cursor.fetchall()
 
