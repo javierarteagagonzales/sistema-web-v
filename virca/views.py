@@ -298,7 +298,7 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
-def get_ordenes_produccion(request):
+def get_ordenes_produccioncal(request):
     query = """
     SELECT
         o.id_orden_producción,
