@@ -598,7 +598,7 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
-def get_inspecciones(request):
+def get_inspeccionescal(request):
     with connection.cursor() as cursor:
         cursor.execute('''
             SELECT

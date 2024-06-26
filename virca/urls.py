@@ -55,7 +55,7 @@ path('production-orders/', ProductionOrderView.as_view(), name='production_order
      #pcp
      
      # calidad
-      path('inspecciones/', views.get_inspecciones, name='inspeccion-list'),
+      path('inspeccionescal/', views.get_inspeccionescal, name='inspeccion-list'),
     path('ordenes-produccioncal/',views.get_ordenes_produccioncal, name='orden-produccion-list'),
 
     
