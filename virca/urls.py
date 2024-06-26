@@ -11,7 +11,10 @@ from .views import MyDataView
 from .views import get_caja_salida_data
 from .views import insertar_datos
 from .views import ProductionOrderView
-from .views import LotesEntreFechasView, ProveedorMateriaPrimaView, CrearProveedorView
+from .views import LotesEntreFechasView,  CrearProveedorView
+from .views import ProveedorMateriaPrimaView, ProveedorDropdownView, MateriaPrimaDropdownView
+
+
 router = DefaultRouter()
 router.register(r'acabado', AcabadoViewSet)
 
@@ -41,7 +44,7 @@ urlpatterns = [
     path('proveedor_materia_prima/', ProveedorMateriaPrimaView.as_view(), name='proveedor_materia_prima'),
     path('dropdown_proveedores/', ProveedorDropdownView.as_view(), name='dropdown_proveedores'),
     path('dropdown_materias_primas/', MateriaPrimaDropdownView.as_view(), name='dropdown_materias_primas'),
-]
+
     
     
     path('lote_entradaalmacen/', views.LotesEntradaView.as_view()),
@@ -68,11 +71,11 @@ path('actividad-diaria/', views.actividad_diaria, name='actividad_diaria'),
 path('insertar/', insertar_datos, name='insertar_datos'),
 path('production-orders/', ProductionOrderView.as_view(), name='production_orders'),
 
-     path('lotesC1/', views.LotesViewC.as_view(), name='lotes'),
+path('lotesC1/', views.LotesViewC.as_view(), name='lotes'),
      
      
- path('activities/', views.get_activities, name='get_activities'),
-    path('activity_details/<int:id_actividad>/', views.get_activity_details, name='get_activity_details'),
+path('activities/', views.get_activities, name='get_activities'),
+path('activity_details/<int:id_actividad>/', views.get_activity_details, name='get_activity_details'),
      # confeccion
      
      #transito
@@ -80,7 +83,7 @@ path('production-orders/', ProductionOrderView.as_view(), name='production_order
      #pcp
      
      # calidad
-      path('inspeccionescal/', views.get_inspeccionescal, name='inspeccion-list'),
+path('inspeccionescal/', views.get_inspeccionescal, name='inspeccion-list'),
     path('ordenes-produccioncal/',views.get_ordenes_produccioncal, name='orden-produccion-list'),
 
     
