@@ -10,6 +10,7 @@ from .views import ReporteAcabadosView
 from .views import MyDataView
 from .views import get_caja_salida_data
 from .views import insertar_datos
+from .views import ProductionOrderView
 router = DefaultRouter()
 router.register(r'acabado', AcabadoViewSet)
 
@@ -35,11 +36,13 @@ urlpatterns = [
      #corte
      
 path('ordenes-produccion/', views.get_ordenes_produccion, name='get_ordenes_produccion'),
-    path('asignar/', views.asignar, name='asignar'),
+path('asignar/', views.asignar, name='asignar'),
 
 path('actividad-diaria/', views.actividad_diaria, name='actividad_diaria'),
 
- path('insertar/', insertar_datos, name='insertar_datos'),
+path('insertar/', insertar_datos, name='insertar_datos'),
+path('production-orders/', ProductionOrderView.as_view(), name='production_orders'),
+
      
      # confeccion
      

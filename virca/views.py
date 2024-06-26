@@ -431,3 +431,48 @@ def insertar_datos(request):
         
         return JsonResponse({'success': True, 'id_lote': id_lote})
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+
+class ProductionOrderView(View):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    op.id_orden_producción,
+                    op.cantidad,
+                    l.id_lote,
+                    l.cantidad AS cantidad_lote,
+                    tc.nombre AS tipo_corte,
+                    COUNT(c.id_corte) AS cantidad_cortes,
+                    e.nombre AS estado_orden,
+                    (SELECT
+                        (SUM(l2.cantidad) / op.cantidad) * 100
+                     FROM lote l2
+                     INNER JOIN corte c2 ON l2.id_lote = c2.id_lote
+                     INNER JOIN orden_producción op2 ON op2.id_dim_corte = c2.id_dim_corte
+                     WHERE op2.id_orden_producción = op.id_orden_producción) AS progreso_produccion
+                FROM orden_producción op
+                INNER JOIN estado e ON op.id_estado = e.id_estado
+                INNER JOIN dimension_corte dc ON op.id_dim_corte = dc.id_dim_corte
+                INNER JOIN corte c ON dc.id_dim_corte = c.id_dim_corte
+                INNER JOIN lote l ON c.id_lote = l.id_lote
+                INNER JOIN parte_corte_detalle pcd ON dc.id_dim_parte_prenda = pcd.id_dim_parte_prenda
+                INNER JOIN tipo_corte tc ON pcd.id_tipo_corte = tc.id_tipo_corte
+                GROUP BY
+                    op.id_orden_producción,
+                    op.cantidad,
+                    l.id_lote,
+                    l.cantidad,
+                    tc.nombre,
+                    e.nombre
+                ORDER BY
+                    op.id_orden_producción,
+                    tc.nombre,
+                    cantidad_cortes DESC;
+            """)
+            rows = cursor.fetchall()
+            columns = [col[0] for col in cursor.description]
+            data = [dict(zip(columns, row)) for row in rows]
+
+        return JsonResponse(data, safe=False)
