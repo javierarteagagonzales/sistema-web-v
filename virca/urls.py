@@ -33,8 +33,9 @@ urlpatterns = [
      
      #corte
      
-      path('ordenes/', views.OrdenesListView.as_view(), name='ordenes_list'),
-    path('asignar/<int:id_orden_produccion>/', views.AsignarView.as_view(), name='asignar_view'),
+path('ordenes-produccion/', views.get_ordenes_produccion, name='get_ordenes_produccion'),
+    path('asignar/', views.asignar, name='asignar'),
+
 
      
      # confeccion
