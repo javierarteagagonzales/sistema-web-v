@@ -642,6 +642,51 @@ def get_ordenes_produccioncal(request):
     return JsonResponse(rows, safe=False)
 
 
+class InspeccionListViewZ(View):
+    def get(self, request, *args, **kwargs):
+        query = """
+        SELECT
+        OP.ID_ORDEN_PRODUCCION,
+        I.ID_INSPECCION,
+        I.ID_LOTE,
+        I.FECHA_INSPECCION,
+        I.ID_AQL_LOTE_RANGO,
+        I.CANTIDAD_DEFECTUOSOS,
+        I.ID_AQL_CODIGO,
+        I.ID_AQL_NIVEL,
+        I.ID_AQL_SIGNIFICANCIA,
+        I.ID_ESTADO,
+        I.ID_RESULTADO
+        FROM
+        INSPECCION_CALIDAD I
+        JOIN LOTE LT ON I.ID_LOTE = LT.ID_LOTE
+        JOIN ACTIVIDAD_DIARIA AD ON LT.ID_ACTIVIDAD = AD.ID_ACTIVIDAD
+        JOIN ORDEN_PRODUCCION OP ON AD.ID_ORDEN_PRODUCCION = OP.ID_ORDEN_PRODUCCION
+        ORDER BY OP.ID_ORDEN_PRODUCCION DESC;
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+        results = []
+        for row in rows:
+            results.append({
+                'id_orden_produccion': row[0],
+                'id_inspeccion': row[1],
+                'id_lote': row[2],
+                'fecha_inspeccion': row[3],
+                'id_aql_lote_rango': row[4],
+                'cantidad_defectuosos': row[5],
+                'id_aql_codigo': row[6],
+                'id_aql_nivel': row[7],
+                'id_aql_significancia': row[8],
+                'id_estado': row[9],
+                'id_resultado': row[10],
+            })
+
+        return JsonResponse(results, safe=False)
+
+
 ###################################################################
 ##########################################################################333333
 # ALMACÉN CENTRAL
