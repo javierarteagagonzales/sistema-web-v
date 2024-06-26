@@ -9,6 +9,7 @@ from .views import get_lote_entrada_vista
 from .views import ReporteAcabadosView
 from .views import MyDataView
 from .views import get_caja_salida_data
+from .views import insertar_datos
 router = DefaultRouter()
 router.register(r'acabado', AcabadoViewSet)
 
@@ -37,6 +38,8 @@ path('ordenes-produccion/', views.get_ordenes_produccion, name='get_ordenes_prod
     path('asignar/', views.asignar, name='asignar'),
 
 path('actividad-diaria/', views.actividad_diaria, name='actividad_diaria'),
+
+ path('insertar/', insertar_datos, name='insertar_datos'),
      
      # confeccion
      

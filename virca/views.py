@@ -394,3 +394,40 @@ def actividad_diaria(request):
         results = [dict(zip(columns, row)) for row in rows]
     
     return JsonResponse(results, safe=False)
+
+
+
+
+@csrf_exempt
+def insertar_datos(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        
+        id_tipo_lote = 2  # el valor constante como especificaste
+        cantidad = data.get('cantidad')
+        id_dim_corte = data.get('id_dim_corte')
+        id_estado = data.get('id_estado')
+        id_actividad = data.get('id_actividad')
+        fecha_creacion = data.get('fecha_creacion')
+        cantidad_usada = data.get('cantidad_usada')
+        
+        with connection.cursor() as cursor:
+            cursor.execute(
+                '''
+                INSERT INTO lote (id_tipo_lote, cantidad, id_dim_corte, id_estado, id_dim_confeccion, id_dim_materia_prima, id_actividad, fecha_creacion)
+                VALUES (%s, %s, %s, %s, NULL, NULL, %s, %s) RETURNING id;
+                ''',
+                [id_tipo_lote, cantidad, id_dim_corte, id_estado, id_actividad, fecha_creacion]
+            )
+            id_lote = cursor.fetchone()[0]
+            
+            cursor.execute(
+                '''
+                INSERT INTO Registro_uso_lote (id_actividad, id_lote, cantidad_usada)
+                VALUES (%s, %s, %s);
+                ''',
+                [id_actividad, id_lote, cantidad_usada]
+            )
+        
+        return JsonResponse({'success': True, 'id_lote': id_lote})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
