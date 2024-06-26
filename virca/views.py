@@ -590,62 +590,47 @@ def get_activity_details(request, id_actividad):
 ## CALIDAD
 
 
-class InspeccionListView(View):
-    def get(self, request):
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                 SELECT
-                    OP2.ID_ORDEN_PRODUCCIóN,
-                    I.ID_INSPECCION,
-                    I.ID_LOTE,
-                    I.FECHA_INSPECCION::date,
-                    I.ID_AQL_LOTE_RANGO,
-                    I.CANTIDAD_DEFECTUOSOS,
-                    I.ID_AQL_CODIGO,
-                    I.ID_AQL_NIVEL,
-                    I.ID_AQL_SIGNIFICANCIA,
-                    I.ID_ESTADO,
-                    I.ID_RESULTADO
-                FROM
-                    INSPECCION_CALIDAD I
-                    JOIN LOTE LT ON I.ID_LOTE = LT.ID_LOTE
-                    JOIN ACTIVIDAD_DIARIA ad ON LT.ID_ACTIVIDAD = ad.ID_ACTIVIDAD
-                    JOIN orden_producción op2  ON ad.id_orden_producción = op2.id_orden_producción
-                ORDER BY op2.id_orden_producción DESC;
-               
-            """)
-            rows = cursor.fetchall()
+def dictfetchallc(cursor):
+    "Retorna todas las filas de un cursor como un diccionario"
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
 
-            results = []
-            for row in rows:
-                results.append({
-                    "id_orden_produccion": row[0],
-                    "id_inspeccion": row[1],
-                    "id_lote": row[2],
-                    "fecha_inspeccion": row[3],
-                    "id_aql_lote_rango": row[4],
-                    "cantidad_defectuosos": row[5],
-                    "id_aql_codigo": row[6],
-                    "id_aql_nivel": row[7],
-                    "id_aql_significancia": row[8],
-                    "estado": row[9],
-                    "id_resultado": row[10],
-                })
+def get_inspecciones(request):
+    with connection.cursor() as cursor:
+        cursor.execute('''
+            SELECT
+                OP2.ID_ORDEN_PRODUCCIÓN,
+                I.ID_INSPECCION,
+                I.ID_LOTE,
+                I.FECHA_INSPECCION::date,
+                I.ID_AQL_LOTE_RANGO,
+                I.CANTIDAD_DEFECTUOSOS,
+                I.ID_AQL_CODIGO,
+                I.ID_AQL_NIVEL,
+                I.ID_AQL_SIGNIFICANCIA,
+                I.ID_ESTADO,
+                I.ID_RESULTADO
+            FROM
+                INSPECCION_CALIDAD I
+                JOIN LOTE LT ON I.ID_LOTE = LT.ID_LOTE
+                JOIN ACTIVIDAD_DIARIA ad ON LT.ID_ACTIVIDAD = ad.ID_ACTIVIDAD
+                JOIN ORDEN_PRODUCCIÓN OP2 ON ad.ID_ORDEN_PRODUCCIÓN = OP2.ID_ORDEN_PRODUCCIÓN
+            ORDER BY OP2.ID_ORDEN_PRODUCCIÓN DESC;
+        ''')
+        rows = dictfetchallc(cursor)
+    return JsonResponse(rows, safe=False)
 
-        return JsonResponse(results, safe=False)
-
-class OrdenProduccionListView(View):
-    def get(self, request):
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                 SELECT
-                    orden_producción.id_orden_producción
-                FROM
-                    orden_producción  
-                ORDER BY orden_producción.id_orden_producción DESC;
-            """)
-            rows = cursor.fetchall()
-
-            results = [row[0] for row in rows]
-
-        return JsonResponse(results, safe=False)
+def get_ordenes_produccion(request):
+    with connection.cursor() as cursor:
+        cursor.execute('''
+            SELECT
+                ID_ORDEN_PRODUCCIÓN
+            FROM
+                ORDEN_PRODUCCIÓN
+            ORDER BY ID_ORDEN_PRODUCCIÓN DESC;
+        ''')
+        rows = dictfetchallc(cursor)
+    return JsonResponse(rows, safe=False)
