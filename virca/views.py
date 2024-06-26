@@ -511,72 +511,75 @@ class LotesViewC(View):
     
     #
     
-def actividades(request):
+    
+
+def get_activities(request):
+    query = """
+        SELECT 
+            ma.id_maquina,
+            m.capacidad_total,
+            COUNT(ad.id_actividad) AS cantidad_actividades,
+            ad.fecha_actividad
+        FROM 
+            actividad_diaria ad
+        JOIN 
+            maquina_actividad ma ON ad.id_actividad = ma.id_actividad
+        JOIN 
+            maquina m ON ma.id_maquina = m.id_maquina
+        WHERE 
+            ad.fecha_actividad = '2024-06-03'
+        GROUP BY 
+            ma.id_maquina, m.capacidad_total, ad.fecha_actividad
+        ORDER BY 
+            cantidad_actividades DESC;
+    """
     with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT 
-          ma.id_maquina,
-          m.capacidad_total,
-          COUNT(ad.id_actividad) AS cantidad_actividades,
-          ad.fecha_actividad
-      FROM 
-          actividad_diaria ad
-      JOIN 
-          maquina_actividad ma ON ad.id_actividad = ma.id_actividad
-      JOIN 
-          maquina m ON ma.id_maquina = m.id_maquina
- 
-      GROUP BY 
-          ma.id_maquina, m.capacidad_total, ad.fecha_actividad
-      ORDER BY 
-          ad.fecha_actividad DESC;  -- Ordenar la cantidad de actividades de forma descendente
-          
-          
-        """)
-        rows = cursor.fetchall()
-
-    data = []
-    for row in rows:
-        data.append({
-            'id_maquina': row[0],
-            'capacidad_total': row[1],
-            'cantidad_actividades': row[2],
-            'fecha_actividad': row[3],
-        })
-
+        cursor.execute(query)
+        result = cursor.fetchall()
+    
+    data = [
+        {
+            "id_maquina": row[0],
+            "capacidad_total": row[1],
+            "cantidad_actividades": row[2],
+            "fecha_actividad": row[3]
+        } for row in result
+    ]
+    
     return JsonResponse(data, safe=False)
 
-def actividad_detalle(request, actividad_id):
+def get_activity_details(request, id_actividad):
+    query = """
+        SELECT
+            ad.id_actividad,
+            ad.fecha_actividad,
+            COUNT(c.id_corte) AS cantidad_cortes,
+            op.cantidad AS cantidad_orden_preproduccion,
+            (SUM(l.cantidad) / op.cantidad) * 100 AS progreso_preproduccion
+        FROM actividad_diaria ad
+        JOIN orden_producción op ON ad.id_orden_producción = op.id_orden_producción
+        JOIN lote l ON ad.id_actividad = l.id_actividad
+        JOIN corte c ON l.id_lote = c.id_lote
+        WHERE ad.id_actividad = %s
+        GROUP BY
+            ad.id_actividad,
+            ad.fecha_actividad,
+            op.cantidad
+        ORDER BY
+            ad.fecha_actividad DESC;
+    """
     with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT
-                ad.id_actividad,
-                ad.fecha_actividad,
-                COUNT(c.id_corte) AS cantidad_cortes,
-                op.cantidad AS cantidad_orden_preproduccion,
-                (SUM(l.cantidad) / op.cantidad) * 100 AS progreso_preproduccion
-            FROM actividad_diaria ad
-            JOIN orden_producción op ON ad.id_orden_producción = op.id_orden_producción
-            JOIN lote l ON ad.id_actividad = l.id_actividad
-            JOIN corte c ON l.id_lote = c.id_lote
-            WHERE ad.id_actividad = %s
-            GROUP BY
-                ad.id_actividad,
-                ad.fecha_actividad,
-                op.cantidad
-            ORDER BY
-                ad.fecha_actividad DESC;
-        """, [actividad_id])
-        row = cursor.fetchone()
-
-    data = {
-        'id_actividad': row[0],
-        'fecha_actividad': row[1],
-        'cantidad_cortes': row[2],
-        'cantidad_orden_preproduccion': row[3],
-        'progreso_preproduccion': row[4],
-    }
-
-    return JsonResponse(data)
+        cursor.execute(query, [id_actividad])
+        result = cursor.fetchall()
     
-    #
+    data = [
+        {
+            "id_actividad": row[0],
+            "fecha_actividad": row[1],
+            "cantidad_cortes": row[2],
+            "cantidad_orden_preproduccion": row[3],
+            "progreso_preproduccion": row[4]
+        } for row in result
+    ]
+    
+    return JsonResponse(data, safe=False)
