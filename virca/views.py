@@ -695,7 +695,7 @@ class TuVista(View):
         cursor = connection.cursor()
         query = """
             SELECT
-                OP2.ID_ORDEN_PRODUCCIÓN,
+                op.id_orden_producción,
                 I.ID_INSPECCION,
                 I.ID_LOTE,
                 I.FECHA_INSPECCION::date,
@@ -710,8 +710,8 @@ class TuVista(View):
                 INSPECCION_CALIDAD I
                 JOIN LOTE LT ON I.ID_LOTE = LT.ID_LOTE
                 JOIN ACTIVIDAD_DIARIA ad ON LT.ID_ACTIVIDAD = ad.ID_ACTIVIDAD
-                JOIN ORDEN_PRODUCCIÓN OP2 ON ad.ID_ORDEN_PRODUCCIÓN = OP2.ID_ORDEN_PRODUCCIÓN
-            ORDER BY OP2.ID_ORDEN_PRODUCCIÓN DESC
+                JOIN orden_producción op  ON ad.id_orden_producción  = op.id_orden_producción
+            ORDER BY op.id_orden_producción DESC
         """
         cursor.execute(query)
         rows = cursor.fetchall()
