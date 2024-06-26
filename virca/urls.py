@@ -36,7 +36,7 @@ urlpatterns = [
 path('ordenes-produccion/', views.get_ordenes_produccion, name='get_ordenes_produccion'),
     path('asignar/', views.asignar, name='asignar'),
 
-
+path('actividad-diaria/', views.actividad_diaria, name='actividad_diaria'),
      
      # confeccion
      

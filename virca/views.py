@@ -365,3 +365,33 @@ def asignar(request):
         
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'fail'}, status=400)
+
+
+
+
+def actividad_diaria(request):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT
+                a.fecha_actividad,
+                o.id_orden_producción,
+                o.cantidad AS cantidad_orden,
+                m.id_maquina,
+                ma.cantidad_hecha AS cantidad_realizar,
+                tc.nombre AS tipo_corte
+            FROM actividad_diaria a
+            JOIN maquina_actividad ma ON a.id_actividad = ma.id_actividad
+            JOIN maquina m ON ma.id_maquina = m.id_maquina
+            JOIN orden_producción o ON a.id_orden_producción = o.id_orden_producción
+            JOIN corte c ON c.id_lote = o.id_dim_corte
+            JOIN dimension_corte dc ON c.id_dim_corte = dc.id_dim_corte
+            JOIN parte_corte_detalle pcd ON dc.id_dim_parte_prenda = pcd.id_dim_parte_prenda
+            JOIN tipo_corte tc ON pcd.id_tipo_corte = tc.id_tipo_corte
+            WHERE a.fecha_actividad = CURRENT_DATE
+            ORDER BY o.id_orden_producción, m.id_maquina;
+        """)
+        rows = cursor.fetchall()
+        columns = [col[0] for col in cursor.description]
+        results = [dict(zip(columns, row)) for row in rows]
+    
+    return JsonResponse(results, safe=False)
