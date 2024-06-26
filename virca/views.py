@@ -590,7 +590,7 @@ def get_activity_details(request, id_actividad):
 ## CALIDAD
 
 
-def dictfetchall(cursor):
+def dictfetchalla(cursor):
     "Retorna todas las filas de un cursor como un diccionario"
     columns = [col[0] for col in cursor.description]
     return [
@@ -620,7 +620,7 @@ def get_inspeccionescal(request):
                 JOIN ORDEN_PRODUCCIÓN OP2 ON ad.ID_ORDEN_PRODUCCIÓN = OP2.ID_ORDEN_PRODUCCIÓN
             ORDER BY OP2.ID_ORDEN_PRODUCCIÓN DESC;
         ''')
-        rows = dictfetchall(cursor)
+        rows = dictfetchalla(cursor)
     return JsonResponse(rows, safe=False)
 
 def get_ordenes_produccioncal(request):
@@ -632,5 +632,5 @@ def get_ordenes_produccioncal(request):
                 ORDEN_PRODUCCIÓN
             ORDER BY ID_ORDEN_PRODUCCIÓN DESC;
         ''')
-        rows = dictfetchall(cursor)
+        rows = dictfetchalla(cursor)
     return JsonResponse(rows, safe=False)
