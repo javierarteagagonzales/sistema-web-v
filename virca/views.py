@@ -938,3 +938,42 @@ class LoteEntradaListView1(View):
             })
         
         return JsonResponse(results, safe=False) 
+    
+    
+    
+
+def get_filtered_data(request):
+    e2_nombre = request.GET.get('e2_nombre', '')
+    tmp_nombre = request.GET.get('tmp_nombre', '')
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT
+                l.id_lote,
+                p.denominacion_social,
+                e.id_espacio,
+                le.fecha_entrada,
+                tmp.nombre as tipo_materia_prima
+            FROM lote l
+            JOIN materia_prima mp ON l.id_lote = mp.id_lote
+            JOIN proveedor p on mp.id_proveedor = p.id_proveedor
+            JOIN espacio e on l.id_lote = e.id_lote
+            JOIN lote_entrada le on l.id_lote = le.id_lote
+            JOIN estado e2 on l.id_estado = e2.id_estado
+            JOIN dimension_materia_prima dmp on mp.id_dim_materia_prima = dmp.id_dim_materia_prima
+            JOIN tipo_materia_prima tmp ON dmp.id_tipo_materia_prima = tmp.id_tipo_materia_prima
+            WHERE e2.nombre = %s AND tmp.nombre = %s;
+        """, [e2_nombre, tmp_nombre])
+
+        rows = cursor.fetchall()
+        columns = [col[0] for col in cursor.description]
+
+    result = [
+        dict(zip(columns, row))
+        for row in rows
+    ]
+
+    return JsonResponse(result, safe=False)
+    
+    
+    

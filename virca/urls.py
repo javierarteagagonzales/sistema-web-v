@@ -13,7 +13,7 @@ from .views import insertar_datos
 from .views import ProductionOrderView
 from .views import LotesEntreFechasView,  CrearProveedorView, LoteEntradaListView1
 from .views import ProveedorMateriaPrimaView, ProveedorDropdownView, MateriaPrimaDropdownView
-
+from .views import get_filtered_data
 
 router = DefaultRouter()
 router.register(r'acabado', AcabadoViewSet)
@@ -52,7 +52,7 @@ urlpatterns = [
     path('crear_proveedoralmacen/', CrearProveedorView.as_view()),
 
      
-     
+     path('get_filtered_data/', get_filtered_data, name='get_filtered_data'),
      
      
      
