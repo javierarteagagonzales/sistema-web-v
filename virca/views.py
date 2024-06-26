@@ -724,8 +724,8 @@ class ProveedorMateriaPrimaView(View):
             JOIN lote l ON mp.id_lote = l.id_lote
             JOIN dimension_materia_prima dmp ON mp.id_dim_materia_prima = dmp.id_dim_materia_prima
             JOIN tipo_materia_prima tmp ON dmp.id_tipo_materia_prima = tmp.id_tipo_materia_prima
-            WHERE 
-                l.id_estado = 12
+            WHERE l.id_estado = 12
+            group by tmp.nombre,p.denominacion_social ;
         """
         
         params = []
